@@ -1,4 +1,4 @@
-module github.com/aqaurius6666/go-utils
+module github.com/aquarius6666/go-utils
 
 go 1.17
 
