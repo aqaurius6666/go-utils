@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+package common_grpc;
+
+option go_package = "./common_grpc/pb";
+
+service Common {
+  rpc Kill(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc Echo(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}
