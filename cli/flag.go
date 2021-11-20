@@ -20,7 +20,7 @@ var (
 		&cli.IntFlag{
 			Name:    "http-port",
 			Value:   80,
-			EnvVars: []string{"HTTP_PORT"},
+			EnvVars: []string{"HTTP_PORT", "PORT"},
 			Usage:   "The port for exposing the api endpoints for accessing",
 		},
 		&cli.IntFlag{
