@@ -22,8 +22,8 @@ type CDBRepository struct {
 	Interfaces DBInterfaces `wire:"-"`
 }
 
-func InitCDBRepository(ctx context.Context, logger *logrus.Logger, db *gorm.DB) *CDBRepository {
-	return &CDBRepository{
+func InitCDBRepository(ctx context.Context, logger *logrus.Logger, db *gorm.DB) CDBRepository {
+	return CDBRepository{
 		Db:         db,
 		Logger:     logger,
 		Context:    ctx,
