@@ -32,7 +32,7 @@ func InitCDBRepository(ctx context.Context, logger *logrus.Logger, db *gorm.DB) 
 }
 
 func (c *CDBRepository) RawSQL(sql string, args ...interface{}) error {
-	return c.Db.Raw(sql, args...).Error
+	return c.Db.Exec(sql, args...).Error
 }
 
 func (c *CDBRepository) SetInterfaces(itf ...interface{}) {
