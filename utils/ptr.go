@@ -33,7 +33,7 @@ func Int32Ptr(a int32) *int32 {
 	return &a
 }
 
-func Int32Var(a *int32) int32 {
+func Int32Val(a *int32) int32 {
 	if a == nil {
 		return 0
 	}
@@ -44,7 +44,7 @@ func Int64Ptr(a int64) *int64 {
 	return &a
 }
 
-func Int64Var(a *int64) int64 {
+func Int64Val(a *int64) int64 {
 	if a == nil {
 		return 0
 	}
