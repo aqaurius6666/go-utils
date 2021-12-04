@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/aquarius6666/go-utils/common_grpc/pb"
+	"github.com/aqaurius6666/go-utils/common_grpc/pb"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"

@@ -3,7 +3,7 @@ package cockroach
 import (
 	"strings"
 
-	"github.com/aquarius6666/go-utils/database"
+	"github.com/aqaurius6666/go-utils/database"
 	"gorm.io/gorm"
 )
 

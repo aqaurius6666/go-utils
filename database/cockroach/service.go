@@ -3,7 +3,7 @@ package cockroach
 import (
 	"context"
 
-	"github.com/aquarius6666/go-utils/database"
+	"github.com/aqaurius6666/go-utils/database"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/xerrors"
 	"gorm.io/gorm"
