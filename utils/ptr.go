@@ -50,3 +50,25 @@ func Int64Val(a *int64) int64 {
 	}
 	return *a
 }
+
+func Float32Val(a *float32) float32 {
+	if a == nil {
+		return 0
+	}
+	return *a
+}
+
+func Float32Ptr(a float32) *float32 {
+	return &a
+}
+
+func Float64Val(a *float64) float64 {
+	if a == nil {
+		return 0
+	}
+	return *a
+}
+
+func Float64Ptf(a float64) *float64 {
+	return &a
+}
