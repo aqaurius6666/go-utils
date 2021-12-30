@@ -3,8 +3,6 @@ package cryptography
 import (
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/ecdsa"
-	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
@@ -12,9 +10,8 @@ import (
 	"errors"
 	"io"
 	"log"
-	"math/big"
 
-	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 )
 
 func copyBytes(b [32]byte) []byte {
@@ -44,23 +41,14 @@ func Base64ToBytes(in string) ([]byte, error) {
 }
 
 func GenerateKeyPair(privateKey []byte) (privkey []byte, pubkey []byte, err error) {
-	if privateKey == nil {
-		key, err := ecdsa.GenerateKey(secp256k1.S256(), rand.Reader)
-		if err != nil {
-			return nil, nil, err
-		}
-		pubkey = elliptic.MarshalCompressed(secp256k1.S256(), key.X, key.Y)
-		privkey = make([]byte, 32)
-		blob := key.D.Bytes()
-		copy(privkey[32-len(blob):], blob)
-
-		return privkey, pubkey, nil
+	priv := &secp256k1.PrivKey{
+		Key: privateKey,
 	}
-	var e ecdsa.PrivateKey
-	e.D = new(big.Int).SetBytes(privateKey)
-	e.PublicKey.Curve = secp256k1.S256()
-	e.PublicKey.X, e.PublicKey.Y = e.PublicKey.Curve.ScalarBaseMult(e.D.Bytes())
-	return e.D.Bytes(), elliptic.MarshalCompressed(secp256k1.S256(), e.X, e.Y), nil
+	if privateKey == nil {
+		priv = secp256k1.GenPrivKey()
+	}
+
+	return priv.Bytes(), priv.PubKey().Bytes(), nil
 }
 
 func SignMessage(msg interface{}, secKey []byte) ([]byte, error) {
@@ -68,7 +56,10 @@ func SignMessage(msg interface{}, secKey []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	sig, err := secp256k1.Sign(hash, secKey)
+	priv := &secp256k1.PrivKey{
+		Key: secKey,
+	}
+	sig, err := priv.Sign(hash)
 	if err != nil {
 		log.Fatal((err))
 	}
@@ -80,13 +71,14 @@ func VerifySig(msg interface{}, sig []byte, pub []byte) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	ok := secp256k1.VerifySignature(pub, hash, sig)
+	pubKey := &secp256k1.PubKey{
+		Key: pub,
+	}
+	ok := pubKey.VerifySignature(hash, sig)
 	if !ok {
 		return false, errors.New("verify signature fail")
 	}
-
 	return ok, nil
-
 }
 
 func ConvertMessage(message interface{}) ([]byte, error) {
@@ -95,7 +87,8 @@ func ConvertMessage(message interface{}) ([]byte, error) {
 	switch message := message.(type) {
 	case json.RawMessage:
 		bmsg = message
-
+	case []byte:
+		bmsg = message
 	case string:
 		bmsg = []byte(message)
 	default:
@@ -104,8 +97,8 @@ func ConvertMessage(message interface{}) ([]byte, error) {
 			return nil, err
 		}
 	}
-	hash := Hash256(bmsg)
-	return hash, nil
+	// hash := Hash256(bmsg)
+	return bmsg, nil
 }
 
 func EncryptMessage(message []byte, secKey []byte) ([]byte, error) {
