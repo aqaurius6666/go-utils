@@ -7,11 +7,16 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"io"
-	"log"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	"github.com/tendermint/tendermint/crypto/secp256k1"
+	"golang.org/x/xerrors"
+)
+
+var (
+	ErrInvalidPrivateKey = xerrors.New("invalid length private key")
+	ErrInvalidMessage    = xerrors.New("invalid message")
 )
 
 func copyBytes(b [32]byte) []byte {
@@ -40,65 +45,59 @@ func Base64ToBytes(in string) ([]byte, error) {
 	return b, nil
 }
 
-func GenerateKeyPair(privateKey []byte) (privkey []byte, pubkey []byte, err error) {
-	priv := &secp256k1.PrivKey{
-		Key: privateKey,
+func GenerateKeyPair(sec []byte) ([]byte, []byte) {
+	if sec == nil {
+		priv := secp256k1.GenPrivKey()
+		pubKey := priv.PubKey().Bytes()
+		privKey := priv.Bytes()
+		return privKey, pubKey
 	}
-	if privateKey == nil {
-		priv = secp256k1.GenPrivKey()
+	if len(sec) != 32 {
+		return nil, nil
 	}
-
-	return priv.Bytes(), priv.PubKey().Bytes(), nil
+	priv := secp256k1.PrivKey(sec)
+	privKey := priv.Bytes()
+	pubKey := priv.PubKey().Bytes()
+	return privKey, pubKey
 }
 
-func SignMessage(msg interface{}, secKey []byte) ([]byte, error) {
-	hash, err := ConvertMessage(msg)
-	if err != nil {
-		return nil, err
-	}
-	priv := &secp256k1.PrivKey{
-		Key: secKey,
-	}
-	sig, err := priv.Sign(hash)
-	if err != nil {
-		log.Fatal((err))
-	}
-	return sig[0:64], nil
-}
-
-func VerifySig(msg interface{}, sig []byte, pub []byte) (bool, error) {
-	hash, err := ConvertMessage(msg)
-	if err != nil {
-		return false, err
-	}
-	pubKey := &secp256k1.PubKey{
-		Key: pub,
-	}
-	ok := pubKey.VerifySignature(hash, sig)
-	if !ok {
-		return false, errors.New("verify signature fail")
-	}
-	return ok, nil
-}
-
-func ConvertMessage(message interface{}) ([]byte, error) {
-	var bmsg []byte
-	var err error
-	switch message := message.(type) {
-	case json.RawMessage:
-		bmsg = message
+func ConvertMessage(message interface{}) (out []byte, err error) {
+	switch tmessage := message.(type) {
 	case []byte:
-		bmsg = message
+		out = tmessage
 	case string:
-		bmsg = []byte(message)
+		out = []byte(tmessage)
+	case json.RawMessage:
+		out = []byte(tmessage)
 	default:
-		bmsg, err = json.Marshal(message)
+		out, err = json.Marshal(message)
 		if err != nil {
-			return nil, err
+			return nil, xerrors.Errorf("%w", ErrInvalidMessage)
 		}
 	}
-	// hash := Hash256(bmsg)
-	return bmsg, nil
+	return
+}
+
+func SignMessage(message interface{}, privKey []byte) ([]byte, error) {
+	fmt.Printf("len(privKey): %v\n", len(privKey))
+	if len(privKey) != 32 {
+		return nil, ErrInvalidPrivateKey
+	}
+	priv := secp256k1.PrivKey(privKey)
+	bz, err := ConvertMessage(message)
+	if err != nil {
+		return nil, xerrors.Errorf("%w", err)
+	}
+	return priv.Sign(bz)
+}
+
+func VerifySignature(message interface{}, sig []byte, pubKey []byte) (bool, error) {
+	pub := secp256k1.PubKey(pubKey)
+	bz, err := ConvertMessage(message)
+	if err != nil {
+		return false, xerrors.Errorf("%w", err)
+	}
+	return pub.VerifySignature(bz, sig), nil
 }
 
 func EncryptMessage(message []byte, secKey []byte) ([]byte, error) {

@@ -8,8 +8,7 @@ import (
 )
 
 func TestGenKeyPair(t *testing.T) {
-	priv, pub, err := GenerateKeyPair(nil)
-	assert.Nil(t, err)
+	priv, pub := GenerateKeyPair(nil)
 	assert.Equal(t, len(priv), 32, "invalid length privatekey")
 	assert.Equal(t, len(pub), 33, "invalid length publickey")
 
@@ -18,8 +17,7 @@ func TestGenKeyPair(t *testing.T) {
 	sample_pub, err := Base64ToBytes("AptMqF53OFvU7sWCEcdCu/F9XykczUMJkM1fQQCXgkon")
 	assert.Nil(t, err)
 
-	priv, pub, err = GenerateKeyPair(sample_priv)
-	assert.Nil(t, err)
+	priv, pub = GenerateKeyPair(sample_priv)
 	assert.Equal(t, len(priv), 32, "invalid length privatekey")
 	assert.Equal(t, priv, sample_priv, "invalid privatekey")
 	assert.Equal(t, len(pub), 33, "invalid length publickey")
@@ -34,8 +32,7 @@ func TestSignMessage(t *testing.T) {
 
 	sample_priv, err := Base64ToBytes("GmQE4ZljJ5PCXev2dRPCW2JHVefgsTM6+96CmqJjb0w=")
 	assert.Nil(t, err)
-	priv, _, err := GenerateKeyPair(sample_priv)
-	assert.Nil(t, err)
+	priv, _ := GenerateKeyPair(sample_priv)
 	sig, err := SignMessage(body, priv)
 	assert.Nil(t, err)
 	assert.Equal(t, len(sig), 64, "invalid length signature")
@@ -49,11 +46,10 @@ func TestSignMessage(t *testing.T) {
 
 func TestVerify(t *testing.T) {
 	body := `{"a":1}`
-	priv, pub, err := GenerateKeyPair(nil)
-	assert.Nil(t, err)
+	priv, pub := GenerateKeyPair(nil)
 	sig, err := SignMessage(body, priv)
 	assert.Nil(t, err)
-	ok, err := VerifySig(body, sig, pub)
+	ok, err := VerifySignature(body, sig, pub)
 	assert.Nil(t, err)
 	assert.Equal(t, ok, true, "sig fail")
 }

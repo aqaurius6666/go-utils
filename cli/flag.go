@@ -5,6 +5,42 @@ import (
 )
 
 var (
+	PrometheusFlag = []cli.Flag{
+		&cli.IntFlag{
+			Name:    "prometheus-port",
+			Value:   7070,
+			EnvVars: []string{"PROMETHEUS_PORT"},
+			Usage:   "The port for exposing prometheus metrics endpoints",
+		},
+		&cli.BoolFlag{
+			Name:    "disable-prometheus",
+			EnvVars: []string{"DISABLE_PROMETHEUS"},
+			Usage:   "disable-prometheus",
+		},
+	}
+	FeatureToggleFlag = []cli.Flag{
+		&cli.BoolFlag{
+			Name:    "feature-toggle",
+			EnvVars: []string{"FEATURE_TOGGLE"},
+			Usage:   "Enable feature toggle",
+		},
+		&cli.StringFlag{
+			Name:    "unleash-api-url",
+			EnvVars: []string{"UNLEASH_API_URL"},
+			Usage:   "Unleash api url",
+		},
+		&cli.StringFlag{
+			Name:    "unleash-token",
+			EnvVars: []string{"UNLEASH_TOKEN"},
+			Usage:   "Unleash token",
+		},
+		&cli.StringFlag{
+			Name:    "unleash-app-name",
+			EnvVars: []string{"UNLEASH_APP_NAME"},
+			Usage:   "Unleash app name",
+		},
+	}
+
 	CommonServerFlag = []cli.Flag{
 		&cli.StringFlag{
 			Name:    "runtime-version",
@@ -29,22 +65,13 @@ var (
 			EnvVars: []string{"PPROF_PORT"},
 			Usage:   "The port for exposing pprof endpoints",
 		},
-		&cli.IntFlag{
-			Name:    "prometheus-port",
-			Value:   7070,
-			EnvVars: []string{"PROMETHEUS_PORT"},
-			Usage:   "The port for exposing prometheus metrics endpoints",
-		},
+
 		&cli.BoolFlag{
 			Name:    "disable-tracing",
 			EnvVars: []string{"DISABLE_TRACING"},
 			Usage:   "disable-tracing",
 		},
-		&cli.BoolFlag{
-			Name:    "disable-prometheus",
-			EnvVars: []string{"DISABLE_PROMETHEUS"},
-			Usage:   "disable-prometheus",
-		},
+
 		&cli.BoolFlag{
 			Name:    "disable-profiler",
 			EnvVars: []string{"DISABLE_PROFILER"},
