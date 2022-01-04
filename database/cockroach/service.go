@@ -19,7 +19,7 @@ type CDBRepository struct {
 	Db         *gorm.DB
 	Logger     *logrus.Logger
 	Context    context.Context
-	Interfaces DBInterfaces `wire:"-"`
+	Interfaces DBInterfaces
 }
 
 func InitCDBRepository(ctx context.Context, logger *logrus.Logger, db *gorm.DB) CDBRepository {
