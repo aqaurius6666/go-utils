@@ -10,6 +10,13 @@ func StrVal(a *string) string {
 	return *a
 }
 
+func SafeStrPtr(a string) *string {
+	if a == "" {
+		return nil
+	}
+	return &a
+}
+
 func BoolPtr(a bool) *bool {
 	return &a
 }
@@ -18,6 +25,13 @@ func BoolVal(a *bool) bool {
 		return false
 	}
 	return *a
+}
+
+func SafeBoolPtr(a bool) *bool {
+	if a {
+		return nil
+	}
+	return &a
 }
 
 func IntPtr(a int) *int {
