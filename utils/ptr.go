@@ -1,5 +1,9 @@
 package utils
 
+import (
+	"strconv"
+)
+
 func StrPtr(a string) *string {
 	return &a
 }
@@ -85,4 +89,23 @@ func Float64Val(a *float64) float64 {
 
 func Float64Ptf(a float64) *float64 {
 	return &a
+}
+
+func InterfacetoInt(i interface{}) int {
+	switch t := i.(type) {
+	case string:
+		i, err := strconv.Atoi(t)
+		if err != nil {
+			return 0
+		}
+		return i
+	case int:
+		return t
+	case int32:
+		return int(t)
+	case int64:
+		return int(t)
+	default:
+		return 0
+	}
 }
