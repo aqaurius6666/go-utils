@@ -133,4 +133,10 @@ var (
 			Usage:   "Redis user",
 		},
 	}
+	OTELFlag = []cli.Flag{
+		&cli.StringFlag{
+			Name:    "otel-address",
+			EnvVars: []string{"CONFIG_OTEL_ADDRESS"},
+		},
+	}
 )

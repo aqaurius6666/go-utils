@@ -48,6 +48,10 @@ func InitLogger(appCtx *cli.Context) *logrus.Logger {
 		logger.Fatalf("Unknown log-format type: %s", logFormat)
 		return logger
 	}
+
+	if appCtx.String("otel-address") != "" {
+		logger.AddHook(&TracingHook{})
+	}
 	return logger
 }
 
