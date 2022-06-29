@@ -24,6 +24,25 @@ func TestGenKeyPair(t *testing.T) {
 	assert.Equal(t, pub, sample_pub, "invalid publickey")
 }
 
+func TestAES(t *testing.T) {
+	TEST_CASE := []map[string]string{
+		{
+			"priv":     `cU1CQLHkh2YhfjWkVAkQu/cxEQwW6gfBcxQPWHyJuGw=`,
+			"password": "Anygonow123",
+			"enc":      `U2FsdGVkX19NzuikxYPOkJXvxRy4wb+toj0wxHaKWnqS/9Pa+bww8VMFLoXvGzncI2UbC+g/eB+VtylabRzsyQ==`,
+		},
+	}
+
+	for _, c := range TEST_CASE {
+		bPriv, err := Base64ToBytes(c["priv"])
+		assert.Nil(t, err)
+		bEnc, err := Base64ToBytes(c["enc"])
+		assert.Nil(t, err)
+		aenc := AES([]byte(c["password"]), bPriv)
+		assert.Equal(t, bEnc, aenc)
+	}
+}
+
 func TestSignMessage(t *testing.T) {
 
 	body := map[string]interface{}{

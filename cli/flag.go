@@ -115,4 +115,22 @@ var (
 			Usage:   "Log file path",
 		},
 	}
+	RedisFlag = []cli.Flag{
+		&cli.StringFlag{
+			Name:     "redis-address",
+			Required: true,
+			EnvVars:  []string{"REDIS_ADDRESS", "CONFIG_REDIS_ADDRESS"},
+			Usage:    "Redis address",
+		},
+		&cli.StringFlag{
+			Name:    "redis-pass",
+			EnvVars: []string{"REDIS_PASS", "CONFIG_REDIS_PASS"},
+			Usage:   "Redis pass",
+		},
+		&cli.StringFlag{
+			Name:    "redis-user",
+			EnvVars: []string{"REDIS_USER", "CONFIG_REDIS_USER"},
+			Usage:   "Redis user",
+		},
+	}
 )

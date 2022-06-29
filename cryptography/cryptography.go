@@ -11,6 +11,7 @@ import (
 	"io"
 
 	"github.com/tendermint/tendermint/crypto/secp256k1"
+	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/xerrors"
 )
 
@@ -130,4 +131,13 @@ func DecryptCipher(data []byte, secKey []byte) ([]byte, error) {
 		return nil, err
 	}
 	return plaintext, nil
+}
+
+func AES(sec []byte, message []byte) []byte {
+	hash := Hash256(sec)
+	block, _ := aes.NewCipher(hash)
+	out := make([]byte, 32)
+	block.Encrypt(out, message)
+	pbkdf2.Key([]byte("password"), []byte("asd"), 4096, 32, sha256.New)
+	return out
 }
