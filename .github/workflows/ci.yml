@@ -13,3 +13,6 @@ jobs:
     - uses: butlerlogic/action-autotag@stable
       with:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        strategy: docker
+        tag_prefix: v
+        commit_message_template: "({{sha}} by {{author}}) {{message}}"
