@@ -29,6 +29,6 @@ jobs:
           flag_branch: false
           message: ${{ github.event.head_commit.message }}
           prev_tag: 'v'
-          update_odoo_module_version: true
+          update_odoo_module_version: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
