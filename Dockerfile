@@ -1,3 +1,3 @@
 FROM golang:1.18.3-alpine
 
-LABEL version=1.7.0
+LABEL version=1.9.0
